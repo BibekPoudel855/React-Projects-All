@@ -1,0 +1,17 @@
+main{
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.calculatorContainer{
+    display: flex;
+    flex-direction: column;
+    border: 2px solid black;
+    border-radius: 40px;
+    width: 290px;
+    height: 630px;
+    overflow: hidden;
+    background-color: black;
+}

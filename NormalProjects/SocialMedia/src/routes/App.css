@@ -1,0 +1,7 @@
+.wholeAppContainer{
+    display: flex;
+}
+.mainBodyContainer{
+    width: 100%;
+    margin-left: 280px;
+}

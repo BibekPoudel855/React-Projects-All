@@ -1,0 +1,22 @@
+.buttonContainer{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+}
+.buttonContainer button{
+    width: 75px;
+    height: 75px;
+    margin: 5px;
+    border-radius: 50%;
+    border: none;
+    background-color: rgb(42, 39, 39);
+    color: white;
+    font-size: 30px;
+    font-weight: 800;
+    transition: all 50ms ease-in;
+}
+.buttonContainer button:hover{
+    color: black;
+    background-color: white;
+}

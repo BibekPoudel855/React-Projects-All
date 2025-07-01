@@ -1,0 +1,9 @@
+.row{
+    margin: 20px 0;
+    margin-top: 20px;
+}
+.row p{
+    font-size: 20px;
+    text-align: left;
+    color: black;
+}
