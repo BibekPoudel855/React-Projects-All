@@ -62,7 +62,7 @@ function Tables() {
 
       <div className="h-[100vh] overflow-y-auto overflow-x-hidden pb-20">
         <div
-          className={`grid grid-cols-[10%_60%_30%] font-bold bg-gray-200 border-b-2 border-gray-400 sticky top-0 z-10`}
+          className={`grid grid-cols-[10%_60%_30%] font-bold bg-gray-200 border-b-2 border-gray-400 sticky top-0 z-10 mt-4`}
         >
           {visibleColumns.map((column, idx) => (
             <div key={idx} className="p-3 border-r">
