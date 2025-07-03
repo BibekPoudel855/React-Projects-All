@@ -1,22 +1,35 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import Footer from "../Footer/Footer";
+import toast, { Toaster } from "react-hot-toast";
 function Tables() {
+  const DEFAULT_DATA = {
+    Id: 1,
+    ItemName: "CALCIUM CARBONATE (CaCO3)",
+    F1: "",
+    F2: "",
+    F3: "",
+    F4: "",
+  };
   const [columns, setColumns] = useState([]);
+  const addItemInputRef = useRef(null);
   const [currentColumnIndex, setCurrentColumnIndex] = useState(0);
-  const [data, setData] = useState([
-    {
-      Id: 1,
-      ItemName: "CALCIUM CARBONATE (CaCO3)",
-      F1: "Value A1",
-      F2: "Value A2",
-      F3: "Value A3",
-      F4: "Value A4",
-    },
-
-  ]);
+  const [data, setData] = useState(() => {
+    const savedData = localStorage.getItem("tableData");
+    if (savedData) {
+      return JSON.parse(savedData);
+    }
+    return [DEFAULT_DATA];
+  });
 
   useEffect(() => {
     if (data && data.length > 0) {
       setColumns(Object.keys(data[0]));
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (data && data.length > 0) {
+      localStorage.setItem("tableData", JSON.stringify(data));
     }
   }, [data]);
 
@@ -41,8 +54,64 @@ function Tables() {
     setData(updatedData);
   };
 
+  const addNewRow = () => {
+    if (!addItemInputRef.current.value.trim()) {
+      toast.error("Please enter an item name");
+      return;
+    }
+    const newRowID = data.length > 0 ? data.length + 1 : 1;
+    const newRow = { Id: newRowID, ItemName: addItemInputRef.current.value };
+    dynamicColumns.forEach((column) => {
+      newRow[column] = "";
+    });
+    setData([...data, newRow]);
+    addItemInputRef.current.value = "";
+    toast.success("New row added successfully");
+  };
+  const addColumn = () => {
+    if (!addItemInputRef.current.value.trim()) {
+      toast.error("Please enter a column name");
+      return;
+    }
+    setColumns([...columns, addItemInputRef.current.value]);
+    addItemInputRef.current.value = "";
+    toast.success("New column added successfully");
+  };
+
+  const resetData = () => {
+    setData([DEFAULT_DATA]);
+    addItemInputRef.current.value = "";
+    toast.success("Data reset successfully");
+  };
   return (
     <div className="px-4 transition-all">
+      <Toaster position="top-right" reverseOrder={false} />
+      <div className="flex items-center justify-between w-full p-4 bg-gray-200 rounded mb-4">
+        <input
+          type="text"
+          className="w-[40%] px-3 py-1 rounded border outline-0"
+          placeholder="Enter item name"
+          ref={addItemInputRef}
+        />
+        <button
+          className="bg-blue-500 text-white  px-4 py-2 rounded"
+          onClick={() => {
+            addNewRow();
+          }}
+        >
+          Row
+        </button>
+        <button
+          className="bg-blue-500 text-white px-4 py-2 rounded"
+          onClick={() => {
+            addColumn();
+          }}
+        >
+          {" "}
+          Column
+        </button>
+      </div>
+
       <div className="h-[100vh] overflow-y-auto overflow-x-hidden pb-20">
         <div
           className={`grid grid-cols-[10%_40%_50%] font-bold bg-gray-200 border-b-2 border-gray-400 sticky top-0 z-10`}
@@ -83,7 +152,14 @@ function Tables() {
             </div>
           );
         })}
-
+        <div className="flex items-center justify-center w-full p-4 bg-gray-200 rounded mt-4">
+          <button
+            className="bg-red-500 text-white px-4 py-2 rounded"
+            onClick={resetData}
+          >
+            Reset
+          </button>
+        </div>
         <div className="flex items-center justify-between w-[100%] p-4 bg-gray-200 rounded fixed left-0 bottom-0">
           <button
             className={`${
