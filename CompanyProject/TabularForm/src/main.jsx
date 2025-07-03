@@ -5,6 +5,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Layout from "./Layout";
 import Table from "./components/Table/Table";
 import Tables from "./components/Table/Tables";
+import TableContextProvider from "./components/context/TableContext";
 
 const router = createBrowserRouter([
   {
@@ -25,6 +26,8 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <TableContextProvider>
+      <RouterProvider router={router} />
+    </TableContextProvider>
   </StrictMode>
 );

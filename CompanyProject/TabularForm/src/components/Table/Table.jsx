@@ -1,61 +1,22 @@
-import { useEffect, useRef, useState } from "react";
-import toast, { Toaster } from "react-hot-toast";
-function Table() {
-  const DEFAULT_DATA = {
-    Id: 1,
-    ItemName: "CALCIUM CARBONATE (CaCO3)",
-    F1: {
-      start: "",
-      release: "",
-      input: "",
-    },
-    F2: {
-      start: "",
-      release: "",
-      input: "",
-    },
-    F3: {
-      start: "",
-      release: "",
-      input: "",
-    },
-    F4: {
-      start: "",
-      release: "",
-      input: "",
-    },
-  };
-  const [columns, setColumns] = useState([]);
-  const addItemInputRef = useRef(null);
-  const [currentColumnIndex, setCurrentColumnIndex] = useState(0);
-  const [data, setData] = useState(() => {
-    const savedData = localStorage.getItem("tableData");
-    if (savedData) {
-      return JSON.parse(savedData);
-    }
-    return [DEFAULT_DATA];
-  });
+import toast from "react-hot-toast";
 
-  useEffect(() => {
-    if (data && data.length > 0) {
-      setColumns(Object.keys(data[0]));
-    }
-  }, [data]);
+import { useTableContext } from "../context/TableContext";
+import NextPrevControls from "./NextPrevControls";
+import AddResetControls from "./AddResetControls";
+function Tables() {
+  // get data from context
+  const {
+    columns,
+    setColumns,
+    addItemInputRef,
+    data,
+    setData,
+    fixedColumns,
+    dynamicColumns,
+    visibleColumns,
+  } = useTableContext();
 
-  useEffect(() => {
-    if (data && data.length > 0) {
-      localStorage.setItem("tableData", JSON.stringify(data));
-    }
-  }, [data]);
-
-  const fixedColumns = ["Id", "ItemName"];
-  const dynamicColumns = columns.filter((column) => {
-    if (!fixedColumns.includes(column)) {
-      return column;
-    }
-  });
-  const visibleColumns = [...fixedColumns, dynamicColumns[currentColumnIndex]];
-
+  // handle input change function
   const handleInputChange = (e, rowId, column) => {
     const updatedData = data.map((item) => {
       if (item.Id == rowId) {
@@ -69,8 +30,10 @@ function Table() {
     setData(updatedData);
   };
 
+  // add new row function
   const addNewRow = () => {
     if (!addItemInputRef.current.value.trim()) {
+      toast.dismiss();
       toast.error("Please enter an item name");
       return;
     }
@@ -81,26 +44,27 @@ function Table() {
     });
     setData([...data, newRow]);
     addItemInputRef.current.value = "";
+    toast.dismiss();
     toast.success("New row added successfully");
   };
+
+  // add column function
   const addColumn = () => {
     if (!addItemInputRef.current.value.trim()) {
-      toast.error("Please enter a column name");
+      toast.dismiss();
+      toast.error("Please enter a column name", {
+        id: "add-column-error",
+      });
       return;
     }
     setColumns([...columns, addItemInputRef.current.value]);
     addItemInputRef.current.value = "";
+    toast.dismiss();
     toast.success("New column added successfully");
   };
 
-  const resetData = () => {
-    setData([DEFAULT_DATA]);
-    addItemInputRef.current.value = "";
-    toast.success("Data reset successfully");
-  };
   return (
     <div className="px-4 transition-all">
-      <Toaster position="top-right" reverseOrder={false} />
       <div className="flex items-center justify-between w-full p-4 bg-gray-200 rounded mb-4">
         <input
           type="text"
@@ -129,7 +93,7 @@ function Table() {
 
       <div className="h-[100vh] overflow-y-auto overflow-x-hidden pb-20">
         <div
-          className={`grid grid-cols-[10%_40%_50%] font-bold bg-gray-200 border-b-2 border-gray-400 sticky top-0 z-10`}
+          className={`grid grid-cols-[10%_60%_30%] font-bold bg-gray-200 border-b-2 border-gray-400 sticky top-0 z-10`}
         >
           {visibleColumns.map((column, idx) => (
             <div key={idx} className="p-3 border-r">
@@ -142,7 +106,7 @@ function Table() {
           return (
             <div
               key={row.Id}
-              className={`grid grid-cols-[10%_40%_50%] border hover:bg-gray-100 transition-all`}
+              className={`grid grid-cols-[10%_60%_30%] border hover:bg-gray-100 transition-all`}
             >
               {visibleColumns.map((currentColumn, idx) => {
                 return (
@@ -154,7 +118,7 @@ function Table() {
                         <input
                           type="text"
                           value={row[currentColumn] ?? ""}
-                          className="w-full border px-2 py-2 rounded"
+                          className={`w-full border-0 p-2 `}
                           onChange={(e) => {
                             handleInputChange(e, row.Id, currentColumn);
                           }}
@@ -167,49 +131,11 @@ function Table() {
             </div>
           );
         })}
-        <div className="flex items-center justify-center w-full p-4 bg-gray-200 rounded mt-4">
-          <button
-            className="bg-red-500 text-white px-4 py-2 rounded"
-            onClick={resetData}
-          >
-            Reset
-          </button>
-        </div>
-        <div className="flex items-center justify-between w-[100%] p-4 bg-gray-200 rounded fixed left-0 bottom-0">
-          <button
-            className={`${
-              currentColumnIndex == 0
-                ? "bg-gray-400 hover:bg-gray-500"
-                : "bg-blue-500"
-            } text-white px-4 py-2 rounded hover:bg-blue-600 transition-all`}
-            onClick={() => {
-              if (currentColumnIndex > 0) {
-                setCurrentColumnIndex(currentColumnIndex - 1);
-              }
-            }}
-          >
-            ← Prev
-          </button>
-          <span>
-            Column: ({currentColumnIndex + 1} of {dynamicColumns.length})
-          </span>
-          <button
-            className={`${
-              currentColumnIndex == dynamicColumns.length - 1
-                ? "bg-gray-400 hover:bg-gray-500"
-                : "bg-blue-500 hover:bg-blue-600"
-            } text-white px-4 py-2 rounded`}
-            onClick={() => {
-              if (currentColumnIndex < dynamicColumns.length - 1) {
-                setCurrentColumnIndex(currentColumnIndex + 1);
-              }
-            }}
-          >
-            Next →
-          </button>
-        </div>
+
+        <AddResetControls />
+        <NextPrevControls />
       </div>
     </div>
   );
 }
-export default Table;
+export default Tables;
