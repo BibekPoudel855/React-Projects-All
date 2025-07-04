@@ -1,41 +1,35 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import { toast } from "react-hot-toast";
+import { useTableContext } from "../context/TableContext";
 
 function Tables() {
-  const LOCAL_STORAGE_KEY = "tableData";
-  const DEFAULT_DATA = [
-    { id: 1, itemName: "Calc Carbon", fValues: { F1: "" } },
-    { id: 2, itemName: "PVC Powder", fValues: { F1: "" } },
-  ];
-
-  const [tableData, setTableData] = useState(() => {
-    const savedDataLocalStorage = localStorage.getItem(LOCAL_STORAGE_KEY);
-    if (savedDataLocalStorage) {
-      return JSON.parse(savedDataLocalStorage);
-    }
-    return DEFAULT_DATA;
-  });
+  const {
+    LOCAL_STORAGE_KEY,
+    DEFAULT_DATA,
+    tableData,
+    setTableData,
+    inputAddingRowItemNameREF,
+    addingNewRowData,
+    setAddingNewRowData,
+    currentColumnIndex,
+    setCurrentColumnIndex,
+    addingRowActive,
+    setAddingRowActive,
+    currentColumnName,
+    columnNames,
+  } = useTableContext();
 
   useEffect(() => {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(tableData));
   }, [tableData]);
-  const [addingNewRowData, setAddingNewRowData] = useState({
-    itemName: "",
-    fValue: {
-      F1: "",
-    },
-  });
-  console.log(addingNewRowData);
 
-  const [currentColumnIndex, setCurrentColumnIndex] = useState(0);
-  const [addingRowActive, setAddingRowActive] = useState(false);
-
-  // finding column name
-  const columnNames =
-    tableData.length > 0 ? Object.keys(tableData[0].fValues) : "F1";
-  const currentColumnName = columnNames[currentColumnIndex];
+  useEffect(() => {
+    if (addingRowActive) {
+      inputAddingRowItemNameREF.current.focus();
+    }
+  }, [addingRowActive]);
 
   const resetData = () => {
     if (JSON.stringify(tableData) === JSON.stringify(DEFAULT_DATA)) {
@@ -51,8 +45,8 @@ function Tables() {
       text: "This will reset all data!",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#dc2626",
-      cancelButtonColor: "#8898aa",
+      confirmButtonColor: "#059669",
+      cancelButtonColor: "#64748b",
       confirmButtonText: "Reset ",
       cancelButtonText: "No, cancel!",
     })
@@ -82,10 +76,9 @@ function Tables() {
       });
     }
   };
-  const handleNextButtonClick = () => {
 
+  const handleNextButtonClick = () => {
     if (currentColumnIndex + 1 == columnNames.length) {
-      console.log(" new coumn");
       const newColumnName = `F${columnNames.length + 1}`;
       const updatedData = tableData.map((row) => {
         return {
@@ -98,7 +91,6 @@ function Tables() {
       });
       setTableData(updatedData);
     }
-
     setCurrentColumnIndex(currentColumnIndex + 1);
   };
 
@@ -120,25 +112,14 @@ function Tables() {
 
   const handleAddingRowOnChange = (e) => {
     const { value } = e.target;
-    console.log(e.target.id);
     if (e.target.id == "itemName") {
-      setAddingNewRowData((prev) => {
-        return {
-          ...prev,
-          itemName: value,
-        };
-      });
+      setAddingNewRowData((prev) => ({ ...prev, itemName: value }));
     }
     if (e.target.id == "fValue") {
-      setAddingNewRowData((prev) => {
-        return {
-          ...prev,
-          fValue: {
-            ...prev.fValue,
-            [currentColumnName]: value,
-          },
-        };
-      });
+      setAddingNewRowData((prev) => ({
+        ...prev,
+        fValue: { ...prev.fValue, [currentColumnName]: value },
+      }));
     }
   };
 
@@ -153,143 +134,137 @@ function Tables() {
     const newRow = {
       id: tableData.length + 1,
       itemName: addingNewRowData.itemName,
-      fValues: {
-        ...addingNewRowData.fValue,
-      },
+      fValues: { ...addingNewRowData.fValue },
     };
     setTableData((prev) => [...prev, newRow]);
-    setAddingNewRowData({
-      itemName: "",
-      fValue: {
-        [currentColumnName]: "",
-      },
-    });
+    setAddingNewRowData({ itemName: "", fValue: { [currentColumnName]: "" } });
     setAddingRowActive(false);
   };
+
   return (
-    <div className="p-4 bg-gray-100 rounded shadow-md mt-4">
-      <table>
-        <thead>
-          <tr>
-            <th className="border border-gray-300 px-4 py-2 w-[10%]">ID</th>
-            <th className="border border-gray-300 px-4 py-2 w-[60%]">
-              Item Name
-            </th>
-            <th className="border border-gray-300 px-4 py-2 w-[30%]">{`F${
-              currentColumnIndex + 1
-            }`}</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {tableData.map((row) => (
-            <tr
-              key={row.id}
-              className={`${row.id % 2 == 0 ? "bg-white" : "bg-gray-100"}`}
-            >
-              <td className="border border-gray-300 px-4 py-2 w-[10%]">
-                {row.id}
-              </td>
-              <td className="border border-gray-300 px-4 py-2 w-[60%]">
-                {row.itemName}
-              </td>
-              <td className="border border-gray-300 px-4 py-2 w-[30%]">
-                <input
-                  type="text"
-                  className="w-full rounded px-2 py-1"
-                  value={row.fValues[currentColumnName] || ""}
-                  onChange={(e) => {
-                    handleInputChange(row.id, e);
-                  }}
-                />
-              </td>
-            </tr>
-          ))}
-
-          {addingRowActive && (
-            <tr className="bg-yellow-50">
-              <td className="border border-gray-300 px-4 py-2 w-[10%]">
-                {tableData.length + 1}
-              </td>
-              <td className="border border-gray-300 px-4 py-2 w-[60%]">
-                <input
-                  type="text"
-                  className="w-full rounded px-2 py-1"
-                  placeholder="Enter Item Name"
-                  id="itemName"
-                  onChange={handleAddingRowOnChange}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      console.log("Enter key pressed itemName");
-                      handleEnterKeyNewRow();
-                    }
-                  }}
-                />
-              </td>
-              <td className="border border-gray-300 px-4 py-2 w-[30%]">
-                <input
-                  type="text"
-                  id="fValue"
-                  className="w-full rounded px-2 py-1"
-                  value={addingNewRowData.fValue[currentColumnName] || ""}
-                  placeholder={currentColumnName}
-                  onChange={handleAddingRowOnChange}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      console.log("Enter key pressed fValue");
-                      handleEnterKeyNewRow();
-                    }
-                  }}
-                />
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-      <div className="w-[100%] flex justify-center pt-6 pb-3">
-        <button
-          className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded transition text-white"
-          onClick={resetData}
-        >
-          Reset
-        </button>
-      </div>
-      <div className="fixed bottom-0 left-0 bg-gray-200 text-white w-full flex justify-between items-center mt-4 p-4">
-        <div className="flex gap-6">
-          <button
-            className={`${
-              currentColumnIndex == 0
-                ? "bg-gray-400 hover:bg-gray-500 cursor-not-allowed"
-                : "bg-blue-500 hover:bg-blue-600"
-            } px-4 py-2 rounded transition`}
-            onClick={handlePrevButtonClick}
-          >
-            ← Prev
-          </button>
-          <button
-            className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded transition"
-            onClick={handleNextButtonClick}
-          >
-            Next →
-          </button>
-        </div>
+    <div>
+      <div className="sticky top-0 p-4 m-4 bg-slate-100 flex justify-between items-center mb-4 rounded">
         {addingRowActive ? (
           <button
-            className="px-4 py-2 border bg-gray-400 text-white hover:bg-gray-500 rounded transition"
-            onClick={() => {
-              setAddingRowActive(false);
-            }}
+            className="px-4 py-2 border bg-slate-400 text-white hover:bg-slate-500 rounded transition"
+            onClick={() => setAddingRowActive(false)}
           >
             Cancel
           </button>
         ) : (
           <button
-            className="px-4 py-2 border bg-green-600 text-white hover:bg-green-700 rounded  transition"
+            className="px-4 py-2 border bg-teal-600 text-white hover:bg-teal-700 rounded transition"
             onClick={() => setAddingRowActive(true)}
           >
             Add Row
           </button>
         )}
+        <button
+          className="bg-emerald-600 hover:bg-emerald-700 px-4 py-2 rounded transition text-white"
+          onClick={resetData}
+        >
+          Reset
+        </button>
+      </div>
+
+      <div className="p-4 rounded mt-4 w-full">
+        <div className="overflow-y-auto max-h-[100vh] mb-20 lg:mb-8">
+          <table>
+            <thead>
+              <tr className="z-10 bg-slate-100">
+                <th className="border border-slate-300 px-4 py-2 w-[10%]">
+                  ID
+                </th>
+                <th className="border border-slate-300 px-4 py-2 w-[60%]">
+                  Item Name
+                </th>
+                <th className="border border-slate-300 px-4 py-2 w-[30%]">{`F${
+                  currentColumnIndex + 1
+                }`}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {tableData.map((row) => (
+                <tr
+                  key={row.id}
+                  className={`${row.id % 2 === 0 ? "bg-white" : "bg-slate-50"}`}
+                >
+                  <td className="border border-slate-300 px-4 py-2 w-[10%]">
+                    {row.id}
+                  </td>
+                  <td className="border border-slate-300 px-4 py-2 w-[60%]">
+                    {row.itemName}
+                  </td>
+                  <td className="border border-slate-300 px-4 py-2 w-[30%]">
+                    <input
+                      type="text"
+                      className="w-full rounded px-2 py-1"
+                      value={row.fValues[currentColumnName] || ""}
+                      onChange={(e) => handleInputChange(row.id, e)}
+                    />
+                  </td>
+                </tr>
+              ))}
+              {addingRowActive && (
+                <tr className="bg-yellow-50">
+                  <td className="border border-slate-300 px-4 py-2 w-[10%]">
+                    {tableData.length + 1}
+                  </td>
+                  <td className="border border-slate-300 px-4 py-2 w-[60%]">
+                    <input
+                      type="text"
+                      className="w-full rounded px-2 py-1"
+                      placeholder="Enter Item Name"
+                      id="itemName"
+                      onChange={handleAddingRowOnChange}
+                      ref={inputAddingRowItemNameREF}
+                      onKeyDown={(e) =>
+                        e.key === "Enter" && handleEnterKeyNewRow()
+                      }
+                    />
+                  </td>
+                  <td className="border border-slate-300 px-4 py-2 w-[30%]">
+                    <input
+                      type="text"
+                      id="fValue"
+                      className="w-full rounded px-2 py-1"
+                      value={addingNewRowData.fValue[currentColumnName] || ""}
+                      placeholder={currentColumnName}
+                      onChange={handleAddingRowOnChange}
+                      onKeyDown={(e) =>
+                        e.key === "Enter" && handleEnterKeyNewRow()
+                      }
+                    />
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="fixed lg:relative bottom-0 left-0 bg-emerald-100 text-white w-full flex justify-between items-center mt-4 p-4">
+          <div className="flex justify-between items-center w-full ">
+            <button
+              className={`${
+                currentColumnIndex == 0
+                  ? "bg-slate-400 hover:bg-slate-500 cursor-not-allowed"
+                  : "bg-teal-600 hover:bg-teal-700"
+              } px-4 py-2 rounded transition`}
+              onClick={handlePrevButtonClick}
+            >
+              ← Prev
+            </button>
+            <span className="text-lg text-slate-800 font-normal">
+              ({currentColumnIndex + 1} of {columnNames.length})
+            </span>
+            <button
+              className="bg-teal-600 hover:bg-teal-700 px-4 py-2 rounded transition"
+              onClick={handleNextButtonClick}
+            >
+              Next →
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

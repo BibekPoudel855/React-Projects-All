@@ -1,66 +1,60 @@
-import { useContext, useEffect, useRef, useState } from "react";
-import { createContext } from "react";
-const DEFAULT_DATA = {
-  id: 1,
-  itemName: "Calc Carbonate",
-  fValues: { F1: "", F2: "", F3: "", F4: "", F5: "" },
-};
+import { createContext, useContext, useRef, useState } from "react";
 
+// data and functions to be shared across components
+const LOCAL_STORAGE_KEY = "tableData";
+const DEFAULT_DATA = [
+  { id: 1, itemName: "Calc Carbon", fValues: { F1: "" } },
+  { id: 2, itemName: "PVC Powder", fValues: { F1: "" } },
+];
+
+// creating context and using it by custom hook in the component
 const TableDataContext = createContext(null);
-// custom hook to use the context
-export const useTableContext = () => {
+const useTableContext = () => {
   return useContext(TableDataContext);
 };
 
+// component which provides data to its children
 function TableContextProvider({ children }) {
-  const addRowInputRef = useRef(null);
-  const [data, setData] = useState(() => {
-    const savedData = localStorage.getItem("tableData");
-    if (savedData) {
-      return JSON.parse(savedData);
+  const inputAddingRowItemNameREF = useRef();
+  const [tableData, setTableData] = useState(() => {
+    const savedDataLocalStorage = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (savedDataLocalStorage) {
+      return JSON.parse(savedDataLocalStorage);
     }
-    return [DEFAULT_DATA];
+    return DEFAULT_DATA;
+  });
+
+  const [addingNewRowData, setAddingNewRowData] = useState({
+    itemName: "",
+    fValue: {
+      F1: "",
+    },
   });
 
   const [currentColumnIndex, setCurrentColumnIndex] = useState(0);
-  const [columns, setColumns] = useState([]);
+  const [addingRowActive, setAddingRowActive] = useState(false);
 
-  useEffect(() => {
-    if (data && data.length > 0) {
-      setColumns(Object.keys(data[0]));
-    }
-  }, [data]);
-
-  // save data to local storage
-  useEffect(() => {
-    if (data && data.length > 0) {
-      localStorage.setItem("tableData", JSON.stringify(data));
-    }
-  }, [data]);
-
-  // setting columns
-  const fixedColumns = ["Id", "ItemName"];
-  const dynamicColumns = columns.filter((column) => {
-    if (!fixedColumns.includes(column)) {
-      return column;
-    }
-  });
-  const visibleColumns = [...fixedColumns, dynamicColumns[currentColumnIndex]];
+  // finding column name
+  const columnNames =
+    tableData.length > 0 ? Object.keys(tableData[0].fValues) : "F1";
+  const currentColumnName = columnNames[currentColumnIndex];
 
   return (
     <TableDataContext.Provider
       value={{
+        LOCAL_STORAGE_KEY,
         DEFAULT_DATA,
+        tableData,
+        setTableData,
+        inputAddingRowItemNameREF,
+        addingNewRowData,
+        setAddingNewRowData,
         currentColumnIndex,
         setCurrentColumnIndex,
-        columns,
-        setColumns,
-        data,
-        setData,
-        fixedColumns,
-        dynamicColumns,
-        visibleColumns,
-        addRowInputRef,
+        addingRowActive,
+        setAddingRowActive,
+        currentColumnName,
+        columnNames,
       }}
     >
       {children}
@@ -68,3 +62,4 @@ function TableContextProvider({ children }) {
   );
 }
 export default TableContextProvider;
+export { useTableContext };

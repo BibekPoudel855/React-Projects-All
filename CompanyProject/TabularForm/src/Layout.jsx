@@ -1,11 +1,11 @@
 import Header from "./components/Header/Header";
 import { Outlet } from "react-router-dom";
 import Footer from "./components/Footer/Footer";
-import  { Toaster } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 
 function Layout() {
   return (
-    <>
+    <div className="w-full lg:w-[40%] mx-auto">
       <Toaster position="top-right" reverseOrder={false} />
       <header>
         <Header />
@@ -13,7 +13,7 @@ function Layout() {
       <main>
         <Outlet />
       </main>
-    </>
+    </div>
   );
 }
 
