@@ -6,6 +6,10 @@ import { useTableContext } from "../context/TableContext";
 
 function Tables() {
   const {
+    timingData,
+    setTimingData,
+    DEFAULT_TIMING_DATA,
+    LOCAL_STORAGE_TIMING_KEY,
     LOCAL_STORAGE_KEY,
     DEFAULT_DATA,
     tableData,
@@ -26,19 +30,26 @@ function Tables() {
   }, [tableData]);
 
   useEffect(() => {
+    localStorage.setItem(LOCAL_STORAGE_TIMING_KEY, JSON.stringify(timingData));
+  }, [timingData]);
+  useEffect(() => {
     if (addingRowActive) {
       inputAddingRowItemNameREF.current.focus();
     }
   }, [addingRowActive]);
 
   const resetData = () => {
-    if (JSON.stringify(tableData) === JSON.stringify(DEFAULT_DATA)) {
+    if (
+      JSON.stringify(tableData) === JSON.stringify(DEFAULT_DATA) &&
+      JSON.stringify(timingData) === JSON.stringify(DEFAULT_TIMING_DATA)
+    ) {
       toast.error("Data is already reseted", {
         id: "data-reset-warning",
         duration: 1000,
       });
       return;
     }
+
     const MySwal = withReactContent(Swal);
     MySwal.fire({
       title: "Are you sure?",
@@ -55,6 +66,7 @@ function Tables() {
           setTableData(DEFAULT_DATA);
           setCurrentColumnIndex(0);
           setAddingRowActive(false);
+          setTimingData(DEFAULT_TIMING_DATA);
           toast.success("Data has been reset successfully");
         } else {
           toast.error("Reset cancelled");
@@ -90,7 +102,17 @@ function Tables() {
         };
       });
       setTableData(updatedData);
+      setTimingData((prev) => {
+        return {
+          ...prev,
+          [newColumnName]: {
+            start: "",
+            release: "",
+          },
+        };
+      });
     }
+
     setCurrentColumnIndex(currentColumnIndex + 1);
   };
 
@@ -141,6 +163,20 @@ function Tables() {
     setAddingRowActive(false);
   };
 
+  const handleTimingDataChange = (e) => {
+    const { id, value } = e.target;
+    console.log(id, value);
+    setTimingData((prev) => {
+      console.log(prev);
+      return {
+        ...prev,
+        [currentColumnName]: {
+          ...prev[currentColumnName],
+          [id]: value,
+        },
+      };
+    });
+  };
   return (
     <div>
       <div className="sticky top-0 p-4 m-4 bg-slate-100 flex justify-between items-center mb-4 rounded">
@@ -168,51 +204,60 @@ function Tables() {
       </div>
 
       <div className="p-4 rounded mt-4 w-full">
-        <div className="overflow-y-auto max-h-[100vh] mb-20 lg:mb-8">
+        <div className="overflow-y-auto   max-h-[100vh] mb-20 lg:mb-8">
           <table>
+            {/* timing  */}
             <thead>
-              <tr className="bg-gray-100">
-                <th rowSpan="5" colSpan={2} className="border px-2 py-1">
+              <tr>
+                <th
+                  colSpan={2}
+                  rowSpan={5}
+                  className="border border-slate-300 px-4 py-2 w-[70%] text-center"
+                >
                   Timing
                 </th>
-                {columnNames.map((col, idx) => (
-                  <th key={idx} className="border px-2 py-1">
-                    1
-                  </th>
-                ))}
+                <th className="border border-slate-300 px-4 py-2 text-center w-[30%]">
+                  {currentColumnIndex + 1}
+                </th>
               </tr>
 
-              <tr className="bg-gray-50">
-                {columnNames.map((col, idx) => (
-                  <td key={idx} className="border px-2 py-1 text-center">
-                    Start
-                  </td>
-                ))}
+              <tr>
+                <th className="border border-slate-300 px-4 py-2 w-[30%]">
+                  Start
+                </th>
               </tr>
 
-              <tr className="bg-gray-50">
-                {columnNames.map((col, idx) => (
-                  <td key={idx} className="border px-2 py-1 text-center">
-                    <input type="text" name="" id="" />
-                  </td>
-                ))}
+              <tr>
+                <td className="border border-slate-300 px-4 py-2 w-[30%]">
+                  <input
+                    type="text"
+                    placeholder="Start"
+                    id="start"
+                    className="w-full rounded px-2 py-1 "
+                    value={timingData[currentColumnName]?.start || ""}
+                    onChange={handleTimingDataChange}
+                  />
+                </td>
+              </tr>
+              <tr>
+                <th className="border border-slate-300 px-4 py-2 w-[30%]">
+                  Release
+                </th>
+              </tr>
+              <tr>
+                <td className="border border-slate-300 px-4 py-2 w-[30%]">
+                  <input
+                    type="text"
+                    placeholder="Release"
+                    id="release"
+                    className="w-full rounded px-2 py-1"
+                    value={timingData[currentColumnName]?.release || ""}
+                    onChange={handleTimingDataChange}
+                  />
+                </td>
               </tr>
 
-              <tr className="bg-gray-50">
-                {columnNames.map((col, idx) => (
-                  <td key={idx} className="border px-2 py-1 text-center">
-                    Release
-                  </td>
-                ))}
-              </tr>
-              <tr className="bg-gray-50">
-                {columnNames.map((col, idx) => (
-                  <td key={idx} className="border px-2 py-1 text-center">
-                    <input type="text" name="" id="" />
-                  </td>
-                ))}
-              </tr>
-
+              {/* main table header  */}
               <tr className="z-10 bg-slate-100">
                 <th className="border border-slate-300 px-4 py-2 w-[10%]">
                   ID

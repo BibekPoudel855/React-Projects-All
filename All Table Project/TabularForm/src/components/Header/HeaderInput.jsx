@@ -4,13 +4,25 @@ import indian from "react-date-object/calendars/indian";
 import indian_hi from "react-date-object/locales/indian_hi";
 import React, { useState } from "react";
 import { MdKeyboardArrowDown } from "react-icons/md";
+import { useTableContext } from "../context/TableContext";
 
 function HeaderInput() {
+  const { tableData, timingData } = useTableContext();
   const [value, setValue] = React.useState(new Date());
   const inputTextStyles = "border border-emerald-300 rounded p-2 w-full";
 
   const [expanded, setExpanded] = useState(false);
   const { register, handleSubmit } = useForm();
+
+  const exportData = (data) => {
+    const allData = {
+      headerData: data,
+      tableData,
+      timingData,
+    };
+    console.log(allData);
+
+  };
 
   const labelStyles = "text-sm font-semibold text-slate-700 mb-2";
   return (
@@ -32,7 +44,7 @@ function HeaderInput() {
       {expanded && (
         <div className="w-[100%] bg-emerald-50 p-4 rounded shadow-inner lg:p-0">
           <form
-            onSubmit={handleSubmit((data) => console.log(data))}
+            onSubmit={handleSubmit(exportData)}
             noValidate
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
           >
