@@ -1,12 +1,9 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { createContext } from "react";
 const DEFAULT_DATA = {
-  Id: 1,
-  ItemName: "CALCIUM CARBONATE (CaCO3)",
-  F1: "",
-  F2: "",
-  F3: "",
-  F4: "",
+  id: 1,
+  itemName: "Calc Carbonate",
+  fValues: { F1: "", F2: "", F3: "", F4: "", F5: "" },
 };
 
 const TableDataContext = createContext(null);
@@ -16,6 +13,7 @@ export const useTableContext = () => {
 };
 
 function TableContextProvider({ children }) {
+  const addRowInputRef = useRef(null);
   const [data, setData] = useState(() => {
     const savedData = localStorage.getItem("tableData");
     if (savedData) {
@@ -62,6 +60,7 @@ function TableContextProvider({ children }) {
         fixedColumns,
         dynamicColumns,
         visibleColumns,
+        addRowInputRef,
       }}
     >
       {children}

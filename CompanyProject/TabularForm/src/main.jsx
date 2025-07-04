@@ -3,10 +3,10 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Layout from "./Layout";
-import Table from "./components/Table/Table";
+import Table from "./components/Ref/Table";
 import Tables from "./components/Table/Tables";
 import TableContextProvider from "./components/context/TableContext";
-
+import BatchTable from "./components/Ref/TableSample1";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -19,6 +19,10 @@ const router = createBrowserRouter([
       {
         path: "a",
         element: <Table />,
+      },
+      {
+        path: "b",
+        element: <BatchTable />,
       },
     ],
   },
