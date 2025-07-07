@@ -1,33 +1,27 @@
-import { useForm } from "react-hook-form";
-import DatePicker from "react-multi-date-picker";
-import indian from "react-date-object/calendars/indian";
-import indian_hi from "react-date-object/locales/indian_hi";
 import React, { useState } from "react";
 import { MdKeyboardArrowDown } from "react-icons/md";
-import { useTableContext } from "../context/TableContext";
+import { useForm } from "react-hook-form";
+import { useTableContext } from "./../Context/TableContextProvider";
 import toast from "react-hot-toast";
 
 function HeaderInput() {
-  const { tableData, timingData } = useTableContext();
-  const [value, setValue] = React.useState(new Date());
+  const { tableData } = useTableContext();
   const inputTextStyles = "border border-emerald-300 rounded p-2 w-full";
-
   const [expanded, setExpanded] = useState(false);
   const { register, handleSubmit } = useForm();
 
   const exportData = (data) => {
     const allData = {
       headerData: data,
-      tableData,
-      timingData,
+      tableData: {
+        ...tableData,
+      },
     };
     console.log(allData);
-    toast.success("Data exported successfully", {
-      id: "data-exported",
-      duration: 1000,
+    toast.success("Data exported successfully!", {
+      id: "export-success",
     });
   };
-
   const labelStyles = "text-sm font-semibold text-slate-700 mb-2";
   return (
     <div className="p-4 w-[100%]">
@@ -50,16 +44,14 @@ function HeaderInput() {
           <form
             onSubmit={handleSubmit(exportData)}
             noValidate
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-0 lg:p-4"
           >
             <label className="flex flex-col">
               <span className={labelStyles}>DATE: </span>
-              <DatePicker
-                value={value}
-                onChange={setValue}
-                calendar={indian}
-                locale={indian_hi}
-                inputClass="border border-emerald-300 rounded p-2 w-full"
+              <input
+                type="date"
+                {...register("date")}
+                className={inputTextStyles}
               />
             </label>
 
@@ -74,34 +66,73 @@ function HeaderInput() {
                 <option value="night">Night</option>
               </select>
             </div>
+
             <div className="flex flex-col">
-              <label className={labelStyles}>THICKNESS: (MM)</label>
+              <label className={labelStyles}>Size:</label>
               <input
                 type="text"
                 className={inputTextStyles}
-                {...register("thickness")}
+                {...register("size")}
+              />
+            </div>
+            <div className="flex flex-col">
+              <label className={labelStyles}>Density:</label>
+              <input
+                type="text"
+                className={inputTextStyles}
+                {...register("density")}
+              />
+            </div>
+            <div className="flex flex-col">
+              <label className={labelStyles}>Min WT. :</label>
+              <input
+                type="text"
+                className={inputTextStyles}
+                {...register("minWeight")}
+              />
+            </div>
+            <div className="flex flex-col">
+              <label className={labelStyles}>Max. WT. :</label>
+              <input
+                type="text"
+                className={inputTextStyles}
+                {...register("maxWeight")}
               />
             </div>
 
             <div>
               <label className={labelStyles}>
-                <span>OPERATOR: </span>
+                <span>Standard Weight: </span>
                 <input
                   type="text"
                   className={inputTextStyles}
-                  {...register("operator")}
+                  {...register("standardWeight")}
                 />
               </label>
             </div>
 
             <div>
               <label className={labelStyles}>
-                <span>MIXTURE OPERATOR: </span>
+                <span>Standard Thickness: </span>
                 <input
                   type="text"
                   className={inputTextStyles}
-                  {...register("mixtureOperator")}
+                  {...register("standardThickness")}
                 />
+              </label>
+            </div>
+
+            <div>
+              <label className={labelStyles}>
+                <span>Product Type: </span>
+                <select
+                  {...register("productType")}
+                  className="border border-emerald-300 rounded p-2 w-full"
+                >
+                  <option value="">D/G/S</option>
+                  <option value="type1">Color</option>
+                  <option value="type2">W/O</option>
+                </select>
               </label>
             </div>
             <button

@@ -5,7 +5,6 @@ import indian_hi from "react-date-object/locales/indian_hi";
 import React, { useState } from "react";
 import { MdKeyboardArrowDown } from "react-icons/md";
 import { useTableContext } from "../context/TableContext";
-import toast from "react-hot-toast";
 
 function HeaderInput() {
   const { tableData, timingData } = useTableContext();
@@ -22,10 +21,7 @@ function HeaderInput() {
       timingData,
     };
     console.log(allData);
-    toast.success("Data exported successfully", {
-      id: "data-exported",
-      duration: 1000,
-    });
+
   };
 
   const labelStyles = "text-sm font-semibold text-slate-700 mb-2";
@@ -37,7 +33,7 @@ function HeaderInput() {
           className={`bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded`}
           onClick={() => setExpanded(!expanded)}
         >
-          {expanded ? "Show Less" : "Export Data"}
+          {expanded ? "Show Less" : "Show More"}
           <MdKeyboardArrowDown
             className={`text-[20px] inline-block ml-1 transition ${
               expanded ? "rotate-180" : ""
@@ -108,7 +104,7 @@ function HeaderInput() {
               type="submit"
               className="bg-teal-600 text-white px-4 py-2 rounded"
             >
-              Export All Data
+              Submit
             </button>
             <button
               type="button"
