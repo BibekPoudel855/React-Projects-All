@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { MdKeyboardArrowDown } from "react-icons/md";
 import { useForm } from "react-hook-form";
-import { useTableContext } from "./../Context/TableContextProvider";
+import { useTableContext } from "../Context/TableContextProvider";
 import toast from "react-hot-toast";
 
 function HeaderInput() {

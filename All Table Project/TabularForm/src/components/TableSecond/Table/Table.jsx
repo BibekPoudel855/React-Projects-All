@@ -2,7 +2,7 @@ import { use, useEffect, useRef, useState } from "react";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import toast from "react-hot-toast";
-import { useTableContext } from "../Context/TableContextProvider";
+import { useTableContext } from "./../Context/TableContextProvider";
 
 function Table() {
   const {

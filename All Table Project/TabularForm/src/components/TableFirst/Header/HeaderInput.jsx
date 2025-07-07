@@ -4,7 +4,7 @@ import indian from "react-date-object/calendars/indian";
 import indian_hi from "react-date-object/locales/indian_hi";
 import React, { useState } from "react";
 import { MdKeyboardArrowDown } from "react-icons/md";
-import { useTableContext } from "../context/TableContext";
+import { useTableContext } from "../context/TableContext.jsx";
 import toast from "react-hot-toast";
 
 function HeaderInput() {

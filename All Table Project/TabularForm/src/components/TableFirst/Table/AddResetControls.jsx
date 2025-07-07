@@ -1,4 +1,4 @@
-import { useTableContext } from "./../context/TableContext";
+import { useTableContext } from "../context/TableContext.jsx";
 import { useEffect } from "react";
 import { toast } from "react-hot-toast";
 import Swal from "sweetalert2";

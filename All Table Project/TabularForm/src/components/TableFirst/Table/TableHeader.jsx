@@ -1,5 +1,5 @@
 
-import { useTableContext } from "../context/TableContext";
+import { useTableContext } from "../context/TableContext.jsx";
 
 function TableHeader() {
   // Importing context values

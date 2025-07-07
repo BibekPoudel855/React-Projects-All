@@ -1,5 +1,5 @@
 import { toast } from "react-hot-toast";
-import { useTableContext } from "../context/TableContext";
+import { useTableContext } from "../context/TableContext.jsx";
 
 function NextPrevControls() {
   // Importing context values

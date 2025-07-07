@@ -1,9 +1,9 @@
 import { useEffect } from "react";
-import { useTableContext } from "../context/TableContext";
-import NextPrevControls from "./NextPrevControls";
-import AddResetControlSection from "./AddResetControls";
-import AddingNewRow from "./AddingNewRow";
-import TableHeader from "./TableHeader";
+import { useTableContext } from "../context/TableContext.jsx";
+import NextPrevControls from "./NextPrevControls.jsx";
+import AddResetControlSection from "./AddResetControls.jsx";
+import AddingNewRow from "./AddingNewRow.jsx";
+import TableHeader from "./TableHeader.jsx";
 
 function Tables() {
   // Importing context values

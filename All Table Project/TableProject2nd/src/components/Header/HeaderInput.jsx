@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 
 function HeaderInput() {
   const { tableData } = useTableContext();
-  const inputTextStyles = "border border-emerald-300 rounded p-2 w-full";
+  const inputTextStyles = "border border-blue-900 rounded p-2 w-full outline-0";
   const [expanded, setExpanded] = useState(false);
   const { register, handleSubmit } = useForm();
 
@@ -24,11 +24,11 @@ function HeaderInput() {
   };
   const labelStyles = "text-sm font-semibold text-slate-700 mb-2";
   return (
-    <div className="p-4 w-[100%]">
-      <div className="flex items-center justify-between bg-emerald-100 py-4 px-4 rounded">
+    <div className="p-4 w-[100%] transition">
+      <div className="flex items-center justify-between  bg-blue-100 py-4 px-4 rounded">
         <h1 className="text-center text-[18px] font-semibold">Information</h1>
         <button
-          className={`bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded`}
+          className={`bg-blue-900 hover:bg-blue-800 text-white px-4 py-2 rounded`}
           onClick={() => setExpanded(!expanded)}
         >
           {expanded ? "Show Less" : "Export Data"}
@@ -40,7 +40,7 @@ function HeaderInput() {
         </button>
       </div>
       {expanded && (
-        <div className="w-[100%] bg-emerald-50 p-4 rounded shadow-inner lg:p-0">
+        <div className="w-[100%] bg-blue-50 p-4 rounded shadow-inner lg:p-0 transform">
           <form
             onSubmit={handleSubmit(exportData)}
             noValidate
@@ -58,7 +58,7 @@ function HeaderInput() {
             <div className="flex flex-col">
               <label className={labelStyles}>Shift :</label>
               <select
-                className="border border-emerald-300 rounded p-2 w-full"
+                className="border border-blue-900 rounded p-2 w-full outline-0"
                 {...register("shift")}
               >
                 <option value="">Select Shift</option>
@@ -127,7 +127,7 @@ function HeaderInput() {
                 <span>Product Type: </span>
                 <select
                   {...register("productType")}
-                  className="border border-emerald-300 rounded p-2 w-full"
+                  className="border border-blue-900 rounded p-2 w-full outline-0"
                 >
                   <option value="">D/G/S</option>
                   <option value="type1">Color</option>
@@ -137,7 +137,7 @@ function HeaderInput() {
             </div>
             <button
               type="submit"
-              className="bg-teal-600 text-white px-4 py-2 rounded"
+              className="bg-blue-900 text-white px-4 py-2 rounded"
             >
               Export All Data
             </button>

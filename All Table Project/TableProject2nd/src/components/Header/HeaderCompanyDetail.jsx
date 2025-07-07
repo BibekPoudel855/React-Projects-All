@@ -2,9 +2,9 @@ import { MdFactory } from "react-icons/md";
 
 function HeaderCompanyDetails() {
   return (
-    <div className="m-4">
-      <div className="flex items-center gap-3 bg-white shadow border rounded border-teal-600 w-full p-4">
-        <div className="bg-teal-600 p-4 rounded-full">
+    <div className="mx-4 mt-4">
+      <div className="flex items-center gap-3 bg-white shadow border rounded border-blue-900 w-full p-4">
+        <div className="bg-blue-900 p-4 rounded-full">
           <MdFactory className="w-5 h-5 text-white" />
         </div>
         <div className="flex flex-col justify-evenly text-left">

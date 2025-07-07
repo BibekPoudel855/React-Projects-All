@@ -1,6 +1,6 @@
 
-import HeaderCompanyList from "./HeaderCompanyDetail";
-import HeaderInput from "./HeaderInput";
+import HeaderCompanyList from "./HeaderCompanyDetail.jsx";
+import HeaderInput from "./HeaderInput.jsx";
 
 function Header() {
   return (
