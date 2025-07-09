@@ -17,10 +17,24 @@ function HeaderInput() {
         ...tableData,
       },
     };
-    console.log(allData);
-    toast.success("Data exported successfully!", {
-      id: "export-success",
-    });
+    try {
+      // converting obj to json string
+      const jsonData = JSON.stringify(allData);
+      // creating download file
+      const blob = new Blob([jsonData], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `table_data_${data.date}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast.success("Data exported successfully!", {
+        id: "export-success",
+      });
+    } catch (error) {
+      toast.error("Export failed");
+      return;
+    }
   };
   const labelStyles = "text-sm font-semibold text-slate-700 mb-2";
   return (

@@ -2,7 +2,7 @@ import Header from "./Header/Header.jsx";
 import { Outlet } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 
-function Layout() {
+function Table1stLayout() {
   return (
     <div className="w-full lg:w-[40%] mx-auto">
       <Toaster position="top-right" reverseOrder={false} />
@@ -16,4 +16,4 @@ function Layout() {
   );
 }
 
-export default Layout;
+export default Table1stLayout;

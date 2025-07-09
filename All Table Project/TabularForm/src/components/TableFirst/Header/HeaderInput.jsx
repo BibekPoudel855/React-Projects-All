@@ -9,23 +9,46 @@ import toast from "react-hot-toast";
 
 function HeaderInput() {
   const { tableData, timingData } = useTableContext();
-  const [value, setValue] = React.useState(new Date());
+  const [date, setDate] = React.useState(new Date());
   const inputTextStyles = "border border-emerald-300 rounded p-2 w-full";
 
   const [expanded, setExpanded] = useState(false);
   const { register, handleSubmit } = useForm();
 
   const exportData = (data) => {
-    const allData = {
-      headerData: data,
-      tableData,
-      timingData,
-    };
-    console.log(allData);
-    toast.success("Data exported successfully", {
-      id: "data-exported",
-      duration: 1000,
-    });
+    try {
+      const allData = {
+        exportInfo: {
+          exportDate: new Date().toISOString(),
+          exportTime: new Date().toLocaleString(),
+        },
+        headerData: {
+          date: date ? date.toString() : "Not selected",
+          shift: data.shift || "Not selected",
+          thickness: data.thickness || "Not entered",
+          operator: data.operator || "Not entered",
+          mixtureOperator: data.mixtureOperator || "Not entered",
+        },
+        timingData: timingData || {},
+        tableData: tableData || [],
+      };
+      // conveting obj to json string
+      const jsonString = JSON.stringify(allData);
+
+      // creating download file
+      const blob = new Blob([jsonString], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `table_data_${data.operator ? data.operator : "unknown"}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+
+      toast.success("JSON file downloaded successfully!");
+    } catch (error) {
+      toast.error("Export failed");
+    }
   };
 
   const labelStyles = "text-sm font-semibold text-slate-700 mb-2";
@@ -55,8 +78,8 @@ function HeaderInput() {
             <label className="flex flex-col">
               <span className={labelStyles}>DATE: </span>
               <DatePicker
-                value={value}
-                onChange={setValue}
+                value={date}
+                onChange={setDate}
                 calendar={indian}
                 locale={indian_hi}
                 inputClass="border border-emerald-300 rounded p-2 w-full"
@@ -108,7 +131,7 @@ function HeaderInput() {
               type="submit"
               className="bg-teal-600 text-white px-4 py-2 rounded"
             >
-              Export All Data
+              Export to JSON
             </button>
             <button
               type="button"
