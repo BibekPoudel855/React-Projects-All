@@ -35,7 +35,7 @@ function AddResetControlSection() {
       text: "This will reset all data!",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#059669",
+      confirmButtonColor: "#E7000B",
       cancelButtonColor: "#64748b",
       confirmButtonText: "Reset ",
       cancelButtonText: "No, cancel!",
@@ -59,8 +59,9 @@ function AddResetControlSection() {
   };
 
   return (
-    <div className="sticky top-0 p-4 m-4 bg-slate-100 flex justify-between items-center mb-4 rounded">
-      {addingRowActive ? (
+    <div className="p-4 m-4  flex justify-center items-center mb-4 rounded">
+      {/* uncomment this to keep add row button */}
+      {/* { addingRowActive ? (
         <button
           className="px-4 py-2 border bg-slate-400 text-white hover:bg-slate-500 rounded transition"
           onClick={() => setAddingRowActive(false)}
@@ -74,9 +75,9 @@ function AddResetControlSection() {
         >
           Add Row
         </button>
-      )}
+      )} */}
       <button
-        className="bg-emerald-600 hover:bg-emerald-700 px-4 py-2 rounded transition text-white"
+        className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded transition text-white"
         onClick={resetData}
       >
         Reset

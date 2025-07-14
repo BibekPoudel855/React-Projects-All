@@ -2,14 +2,14 @@ import { useForm } from "react-hook-form";
 import DatePicker from "react-multi-date-picker";
 import indian from "react-date-object/calendars/indian";
 import indian_hi from "react-date-object/locales/indian_hi";
-import React, { useState } from "react";
+import { useState } from "react";
 import { MdKeyboardArrowDown } from "react-icons/md";
 import { useTableContext } from "../context/TableContext.jsx";
 import toast from "react-hot-toast";
 
 function HeaderInput() {
   const { tableData, timingData } = useTableContext();
-  const [date, setDate] = React.useState(new Date());
+  const [date, setDate] = useState();
   const inputTextStyles = "border border-emerald-300 rounded p-2 w-full";
 
   const [expanded, setExpanded] = useState(false);
@@ -23,7 +23,7 @@ function HeaderInput() {
           exportTime: new Date().toLocaleString(),
         },
         headerData: {
-          date: date ? date.toString() : "Not selected",
+          date: formatDisplayDate(date),
           shift: data.shift || "Not selected",
           thickness: data.thickness || "Not entered",
           operator: data.operator || "Not entered",
@@ -38,10 +38,12 @@ function HeaderInput() {
       // creating download file
       const blob = new Blob([jsonString], { type: "application/json" });
       const url = URL.createObjectURL(blob);
-      
+
       const a = document.createElement("a");
       a.href = url;
-      a.download = `table_data_${data.operator ? data.operator : "unknown"}.json`;
+      a.download = `table_data_${
+        data.operator ? data.operator : "unknown"
+      }.json`;
       a.click();
       URL.revokeObjectURL(url);
 
@@ -52,15 +54,29 @@ function HeaderInput() {
   };
 
   const labelStyles = "text-sm font-semibold text-slate-700 mb-2";
+
+
+  const formatDisplayDate = (dateValue) => {
+    if (!dateValue) return "N/A";
+    if (dateValue.format) {  
+
+      
+      return dateValue.format(); 
+    }
+    return dateValue.toString();
+  };
+
   return (
     <div className="p-4 w-[100%]">
       <div className="flex items-center justify-between bg-emerald-100 py-4 px-4 rounded">
-        <h1 className="text-center text-[18px] font-semibold">Information</h1>
+        <h1 className="text-center text-[16px] font-semibold">
+          Date : <span className="font-normal">{formatDisplayDate(date)}</span>
+        </h1>
         <button
           className={`bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded`}
           onClick={() => setExpanded(!expanded)}
         >
-          {expanded ? "Show Less" : "Export Data"}
+          {expanded ? "Hide" : "Show"}
           <MdKeyboardArrowDown
             className={`text-[20px] inline-block ml-1 transition ${
               expanded ? "rotate-180" : ""
@@ -78,11 +94,10 @@ function HeaderInput() {
             <label className="flex flex-col">
               <span className={labelStyles}>DATE: </span>
               <DatePicker
-                value={date}
-                onChange={setDate}
                 calendar={indian}
                 locale={indian_hi}
                 inputClass="border border-emerald-300 rounded p-2 w-full"
+                onChange={setDate}
               />
             </label>
 
@@ -146,4 +161,5 @@ function HeaderInput() {
     </div>
   );
 }
+
 export default HeaderInput;

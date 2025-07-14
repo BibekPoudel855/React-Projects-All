@@ -3,8 +3,16 @@ import { useTableContext } from "../context/TableContext.jsx";
 
 function NextPrevControls() {
   // Importing context values
-  const { currentColumnIndex, setCurrentColumnIndex, columnNames, tableData, setTableData, setTimingData } =
-    useTableContext();
+  const {
+    currentColumnIndex,
+    setCurrentColumnIndex,
+    currentColumnName,
+    columnNames,
+    tableData,
+    timingData,
+    setTableData,
+    setTimingData,
+  } = useTableContext();
 
   // Function to handle previous button click
   const handlePrevButtonClick = () => {
@@ -19,8 +27,36 @@ function NextPrevControls() {
     }
   };
 
+  // functon to check if current column is empty
+  const isCurrentColumnEmpty = () => {
+    console.log(tableData);
+    console.log(timingData);
+    console.log(currentColumnName);
+
+    let isEmpty = false;
+    tableData.forEach((element) => {
+      if (element.fValues[currentColumnName] == "") {
+        isEmpty = true;
+      }
+    });
+    if (
+      timingData[currentColumnName].start == "" &&
+      timingData[currentColumnName].release == ""
+    ) {
+      isEmpty = true;
+    }
+    return isEmpty;
+  };
+
   // Function to handle next button click
   const handleNextButtonClick = () => {
+    if (isCurrentColumnEmpty()) {
+      toast.error("Please fill the current column before proceeding", {
+        id: "empty-column-warning",
+        duration: 1000,
+      });
+      return;
+    }
     if (currentColumnIndex + 1 == columnNames.length) {
       const newColumnName = `F${columnNames.length + 1}`;
       const updatedData = tableData.map((row) => {

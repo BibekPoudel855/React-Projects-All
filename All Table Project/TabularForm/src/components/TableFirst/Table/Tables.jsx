@@ -56,13 +56,25 @@ function Tables() {
     });
     setTableData(updatedData);
   };
+
+  const totalCurrentColumnValue = () => {
+    let total = 0;
+    tableData.forEach((row) => {
+      console.log(row.fValues[currentColumnName]);
+      let value = parseFloat(row.fValues[currentColumnName]);
+      if (!isNaN(value)) {
+        total += value;
+      }
+    });
+    return total;
+  };
+
   // Render  table
   return (
     <div>
-      <AddResetControlSection />
-      <div className="p-4 rounded mt-4 w-full">
-        <div className="overflow-y-auto   max-h-[100vh] mb-20 lg:mb-8">
-          <table>
+      <div className="p-4 rounded mt-4 overflow-y-auto">
+        <div className="overflow-y-auto max-h-[90vh] mb-20 lg:mb-8">
+          <table className="">
             {/* timing  */}
             <TableHeader />
 
@@ -78,14 +90,14 @@ function Tables() {
                   <td className="border border-slate-300 px-4 py-2 w-[60%]">
                     <input
                       type="text"
-                      className="w-full rounded px-2 py-1"
+                      className="w-full rounded px-2 py-1 text-ellipsis"
                       value={row.itemName}
                       onChange={(e) => handleItemNameInputChange(row.id, e)}
                     />
                   </td>
                   <td className="border border-slate-300 px-4 py-2 w-[30%]">
                     <input
-                      type="text"
+                      type="number"
                       className="w-full rounded px-2 py-1"
                       value={row.fValues[currentColumnName] || ""}
                       onChange={(e) => handleInputChange(row.id, e)}
@@ -95,8 +107,22 @@ function Tables() {
               ))}
               {/* Adding new row section */}
               <AddingNewRow />
+              <tr>
+                <td
+                  colSpan="2"
+                  className="border border-slate-300 px-4 py-2 text-center"
+                >
+                  <span className="text-sm text-gray-500">
+                    Total {currentColumnName}
+                  </span>
+                </td>
+                <td className="border border-slate-300 px-4 py-2 text-left text-gray-500">
+                  {totalCurrentColumnValue()}
+                </td>
+              </tr>
             </tbody>
           </table>
+          <AddResetControlSection />
         </div>
         <NextPrevControls />
       </div>

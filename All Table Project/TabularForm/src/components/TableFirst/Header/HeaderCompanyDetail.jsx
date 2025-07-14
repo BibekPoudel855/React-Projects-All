@@ -4,7 +4,7 @@ function HeaderCompanyList() {
   return (
     <div className="m-4">
       <div className="flex items-center gap-3 bg-white shadow border rounded border-teal-600 w-full p-4">
-        <div className="bg-teal-600 p-4 rounded-full">
+        <div className="bg-gradient-to-r from-teal-500 to-emerald-600 p-4 rounded-full">
           <MdFactory className="w-5 h-5 text-white" />
         </div>
         <div className="flex flex-col justify-evenly text-left">

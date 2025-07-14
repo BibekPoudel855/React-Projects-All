@@ -8,7 +8,6 @@ import TableContextProvider from "./components/TableFirst/context/TableContext";
 import Table2Layout from "./components/TableSecond/Table2Layout";
 import Table3Layout from "./components/TableThird/Table3Layout.jsx";
 import Table3 from "./components/TableThird/Table/Table3.jsx";
-
 const router = createBrowserRouter([
   {
     path: "/",
