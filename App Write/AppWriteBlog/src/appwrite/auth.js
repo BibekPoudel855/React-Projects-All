@@ -1,4 +1,3 @@
-
 import { appWriteConfig } from "./../config";
 import { Client, Account, ID } from "appwrite";
 
